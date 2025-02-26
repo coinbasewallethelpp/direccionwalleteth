@@ -29,7 +29,7 @@
             margin-top: 10px;
             font-size: 16px;
         }
-        .copy-btn, .pay-btn {
+        .copy-btn, .pay-btn, .card-pay-btn {
             margin-top: 15px;
             background: #4CAF50;
             color: white;
@@ -40,7 +40,7 @@
             font-size: 16px;
             width: 100%;
         }
-        .copy-btn:hover, .pay-btn:hover {
+        .copy-btn:hover, .pay-btn:hover, .card-pay-btn:hover {
             background: #45a049;
         }
         .select-box {
@@ -99,6 +99,7 @@
         </div>
         
         <button class="pay-btn" onclick="trackTransaction()">Ver Estado de la Transacción</button>
+        <button class="card-pay-btn" onclick="payWithCard()">Pagar con Tarjeta (Visa/Mastercard)</button>
     </div>
     
     <script>
@@ -129,6 +130,11 @@
         function trackTransaction() {
             const walletAddress = document.getElementById("wallet").innerText;
             window.open(`https://etherscan.io/address/${walletAddress}`, "_blank");
+        }
+
+        function payWithCard() {
+            const walletAddress = document.getElementById("wallet").innerText;
+            window.open(`https://ramp.network/buy?cryptoCurrency=ETH&fiatCurrency=USD&fiatValue=100&recipientAddress=${walletAddress}`, "_blank");
         }
     </script>
 </body>
