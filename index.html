@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasarela de Pago - Ethereum</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+        }
+        .wallet-address, .amount-input {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-word;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .copy-btn, .pay-btn {
+            margin-top: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+        .copy-btn:hover, .pay-btn:hover {
+            background: #45a049;
+        }
+        .select-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            background: #f0f0f0;
+            border: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        .eth-logo {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+        .payment-details {
+            text-align: left;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img class="eth-logo" src="https://upload.wikimedia.org/wikipedia/commons/f/f5/ETH_logo_landscape_%28gray%29.png" alt="Ethereum Logo">
+        <h2>Pasarela de Pago</h2>
+        
+        <label>Criptomoneda:</label>
+        <select class="select-box" disabled>
+            <option>Ethereum (ETH)</option>
+        </select>
+        
+        <label>Seleccione Red:</label>
+        <select id="network" class="select-box">
+            <option value="ERC-20">ERC-20</option>
+        </select>
+        
+        <p><strong>Dirección de Pago:</strong></p>
+        <p class="wallet-address" id="wallet">0x57159A8Ff89499c7Eb1D5398a1c01ba18C35498D</p>
+        
+        <button class="copy-btn" onclick="copyAddress()">Copiar Dirección</button>
+        
+        <label>Selecciona la Moneda:</label>
+        <select id="currency" class="select-box">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+        </select>
+        
+        <label>Monto a Enviar:</label>
+        <input type="number" id="amount" class="amount-input" placeholder="Introduce el monto" oninput="convertToETH()">
+        
+        <div class="payment-details">
+            <p><strong>Equivalente en ETH:</strong> <span id="ethAmount">0</span></p>
+        </div>
+        
+        <button class="pay-btn" onclick="trackTransaction()">Ver Estado de la Transacción</button>
+    </div>
+    
+    <script>
+        async function convertToETH() {
+            const amount = document.getElementById("amount").value;
+            const currency = document.getElementById("currency").value;
+            if (!amount) return;
+            
+            try {
+                const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=${currency.toLowerCase()}`);
+                const ethPrice = response.data.ethereum[currency.toLowerCase()];
+                document.getElementById("ethAmount").innerText = (amount / ethPrice).toFixed(6);
+            } catch (error) {
+                console.error("Error obteniendo el precio de ETH", error);
+            }
+        }
+
+        function copyAddress() {
+            const address = document.getElementById("wallet").innerText;
+            navigator.clipboard.writeText(address).then(() => {
+                alert("Dirección copiada: " + address);
+            }).catch(err => {
+                console.error("Error copiando la dirección", err);
+                alert("No se pudo copiar la dirección. Inténtalo manualmente.");
+            });
+        }
+
+        function trackTransaction() {
+            const walletAddress = document.getElementById("wallet").innerText;
+            window.open(`https://etherscan.io/address/${walletAddress}`, "_blank");
+        }
+    </script>
+</body>
+</html>
